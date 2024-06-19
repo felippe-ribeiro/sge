@@ -106,7 +106,7 @@ def export_products_to_excel(request):
         ws.append([
             product.id, 
             product.title, 
-            product.category.name if product.category else '',, 
+            product.category.name if product.category else '',
             product.brand.name if product.brand else '', 
             product.serie_number if product.serie_number else '', 
             product.cost_price,

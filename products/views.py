@@ -7,6 +7,12 @@ from brands.models import Brand
 from categories.models import Category
 from . import models, forms, serializers
 
+#Excel
+from django.shortcuts import render
+import openpyxl
+from django.http import HttpResponse
+from .models import Product
+
 
 class ProductListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = models.Product
@@ -14,6 +20,7 @@ class ProductListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     context_object_name = 'products'
     paginate_by = 10
     permission_required = 'products.view_product'
+    
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -79,3 +86,41 @@ class ProductCreateListAPIView(generics.ListCreateAPIView):
 class ProductRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Product.objects.all()
     serializer_class = serializers.ProductSerializer
+
+#excel
+def export_products_to_excel(request):
+    # Pegar todos os produtos
+    products = Product.objects.all()
+
+    # Criar uma planilha em branco
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Produtos"
+
+    # Adicionar cabeçalhos
+    headers = ['ID', 'Titulo', 'Categoria', 'Marcas', 'Numero de Serie', 'Preço De Custo', 'Preço de Venda', 'Quantidade', 'Criado Em', 'Atualizado Em']
+    ws.append(headers)
+
+    # Adicionar dados dos produtos
+    for product in products:
+        ws.append([
+            product.id, 
+            product.title, 
+            product.category.name if product.category else '',, 
+            product.brand.name if product.brand else '', 
+            product.serie_number if product.serie_number else '', 
+            product.cost_price,
+            product.selling_price,
+            product.quantity, 
+            product.created_at, 
+            product.updated_at
+        ])
+
+    # Definir o tipo de resposta
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=products.xlsx'
+
+    # Salvar a planilha no response
+    wb.save(response)
+
+    return response

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import django_on_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +27,7 @@ SECRET_KEY = 'django-insecure-p%a7njmpp-*sj*-g$k!-(olb3%0(y&bk=y34g!!)e993whp6w*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
 
+    'django_extensions',
     'authentication',
     'brands',
     'suppliers',
@@ -92,8 +94,12 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'bd_estoque',  # Nome do banco de dados PostgreSQL
+        'USER': 'suportesge',        # Nome de usuário do PostgreSQL
+        'PASSWORD': '44Tf%Cyy2cQE5',      # Senha do PostgreSQL
+        'HOST': 'sgestoque.chio2i8yqbdx.us-east-2.rds.amazonaws.com',          # Host onde o PostgreSQL está sendo executado. Deixe como 'localhost' se estiver local.
+        'PORT': '5432',               # Porta padrão do PostgreSQL
     }
 }
 
@@ -154,3 +160,4 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
 }
+django_on_heroku.settings(locals())

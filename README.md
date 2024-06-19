@@ -33,3 +33,8 @@ python manage.py runserver
 
 Após isso, o sistema estará pronto para ser acessado em:
 [http://localhost:8000](http://localhost:8000)
+
+
+CRIAR SUPERUSER
+python manage.py createsuperuser
+este: Inicie o servidor Django (python manage.py runserver) e acesse /admin
